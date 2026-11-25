@@ -1,0 +1,12 @@
+# Data and secrets are never published from this repo
+*.csv
+*.key
+.env
+deepseek_key.txt
+
+# Python / OS / editor
+__pycache__/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
