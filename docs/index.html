@@ -137,7 +137,7 @@ footer a{color:var(--accent)}
   <div class="actions"><button class="ibtn" id="theme" title="Switch light/dark">◐ Theme</button><a class="ibtn" href="https://github.com/sroy-quant/nifty-macro-research">GitHub ↗</a></div>
  </div>
  <nav class="tabs">
-  <button class="tab on" data-p="ov">Overview</button><button class="tab" data-p="lab">Score lab</button><button class="tab" data-p="p1">Why Nifty moved</button><button class="tab" data-p="bd">Big-day explorer</button><button class="tab" data-p="ev">Events &amp; expiry</button><button class="tab" data-p="rg">Regime</button><button class="tab" data-p="me">Method</button>
+  <button class="tab on" data-p="ov">Overview</button><button class="tab" data-p="lab">Score lab</button><button class="tab" data-p="p1">Why Nifty moved</button><button class="tab" data-p="bd">Big-day explorer</button><button class="tab" data-p="ev">Events &amp; expiry</button><button class="tab" data-p="rg">Regime</button><button class="tab" data-p="rr">Range &amp; gap fill</button><button class="tab" data-p="me">Method</button>
  </nav>
 </div></header>
 
@@ -246,6 +246,29 @@ footer a{color:var(--accent)}
   <div class="legend"><span><i style="background:var(--neg)"></i>Mid-zone</span><span><i style="background:var(--grid);border:1px solid var(--border2)"></i>Normal</span><span><i style="background:var(--s4)"></i>Fear (one)</span><span><i style="background:var(--s3)"></i>Fear (both)</span></div><div id="rg-line"></div></div>
 </section>
 
+<section class="page" id="rr">
+ <h3 class="sec">Day range and gap fill</h3>
+ <p class="sub">Direction is close to a coin flip, but <b>how far</b> Nifty moves is not. A three-input model known at 09:00 (previous day's range, 5-day average range, India VIX) sorts days into Quiet, Normal and Wide, using cut-offs fixed on 2015–19 and never changed. The same discipline applies: fitted on 2015–19, tested on 2020–24 and Dec 2024 onward.</p>
+ <div class="row c4" id="rr-kpis"></div>
+ <div class="row c2">
+  <div class="card"><div class="ch"><div><h4>Average high-to-low range by expected bucket</h4><p class="cap">Range = (high − low) ÷ previous close</p></div><span class="tag">AVG %</span></div>
+   <div class="legend"><span><i style="background:var(--s1)"></i>2015–19 (fit)</span><span><i style="background:var(--s2)"></i>2020–24 (test)</span><span><i style="background:var(--s4)"></i>Dec 2024 → (final check)</span></div><div id="rr-avg"></div></div>
+  <div class="card"><div class="ch"><div><h4>Days that moved more than 1%</h4><p class="cap">The share an option buyer needs to cover time decay</p></div><span class="tag">% OF DAYS</span></div>
+   <div class="legend"><span><i style="background:var(--s1)"></i>2015–19</span><span><i style="background:var(--s2)"></i>2020–24</span><span><i style="background:var(--s4)"></i>Dec 2024 →</span></div><div id="rr-gt1"></div></div>
+ </div>
+ <div class="row c2">
+  <div class="card"><div class="ch"><div><h4>Does the gap fill by 11:00?</h4><p class="cap">Share of sessions that traded back to the previous close in bars opening by 11:00 · 2015–26, 15-minute data</p></div><span class="tag">FILL %</span></div>
+   <div class="legend"><span><i style="background:var(--pos)"></i>Gap up</span><span><i style="background:var(--neg)"></i>Gap down</span></div><div id="rr-gf"></div>
+   <p class="note">Gaps above 0.7% almost never fill by 11:00, so fading them is a losing bet. Direction, a "surprise" gap and the regime added nothing reliable beyond gap size (tested 2020–24 and Dec 2024 →).</p></div>
+  <div class="card"><div class="ch"><div><h4>Is it just India VIX?</h4><p class="cap">Actual range ÷ the move VIX implies (VIX ÷ √252), by how our forecast compares with VIX</p></div><span class="tag">RATIO</span></div>
+   <table><thead><tr><th class="l">Our forecast vs VIX</th><th>2015–19</th><th>2020–24</th><th>Dec 2024 →</th></tr></thead><tbody id="rr-vix"></tbody></table>
+   <p class="note">When our forecast is high relative to VIX, the day's range ran above the VIX-implied move in every period, and in 30 of 40 rolling 3-month windows. The effect is modest: a context signal, not a trade on its own.</p>
+   <h4 style="margin-top:14px">Model vs "same as yesterday's range"</h4>
+   <div style="overflow-x:auto"><table><thead><tr><th class="l">Model / baseline</th><th>2015–19</th><th>2020–24</th><th>Dec 2024 →</th></tr></thead><tbody id="rr-base"></tbody></table></div>
+   <p class="note">Picking the exact bucket is no better than yesterday's range (≈50% either way). The value is in separating calm days from big ones, with half as many surprise big days on "Quiet" calls.</p></div>
+ </div>
+</section>
+
 <section class="page" id="me">
  <h3 class="sec">Method &amp; lessons</h3>
  <p class="sub">The same discipline as production analytics: define the decision, freeze the logic, then measure it against a baseline on data the model has never seen.</p>
@@ -260,6 +283,7 @@ footer a{color:var(--accent)}
    <li><b>Timing beats correlation.</b> Most "predictive" macro links are same-day explanations.</li>
    <li><b>The gap prices the news.</b> By 09:15 the overnight move is in the price; the tradable move is close to a coin flip.</li>
    <li><b>Slow beats fast.</b> Regimes (fear vs mid-zone) carry more usable information than daily direction.</li>
+   <li><b>Size is easier than sign.</b> How far the day moves, and whether a gap fills, are predictable; which way it closes is not.</li>
    <li><b>Beat the base rate, not 50%</b>, year by year, after costs.</li>
    <li><b>Small samples lie.</b> "Expiry days fall" was 71% in 2025–26 and about 48% over the 10 years before.</li></ol></div>
   <div class="card"><h4>Data &amp; stack</h4><table><tbody>
@@ -464,7 +488,27 @@ function drawRg(){const rows=ROWS.filter(r=>RP==="ALL"||r.per===RP),v=rows.filte
   tip:i=>{const r=rs[i];return`<b>${r.d}</b>NIFTY      ${r.cl.toLocaleString("en-IN")}\nRegime     ${RGN[String(r.rg)]}\nNext 20d   ${r.n20==null?"–":sgn(r.n20,2)+"%"}`}})}
 
 // TABS & THEME
-const DRAW={ov:drawOverview,lab:drawLab,p1:drawP1,bd:drawBD,ev:drawEV,rg:drawRg,me:()=>{}};
+// ---- range & gap fill (static results of the v21/v22 tests) ----
+const RR={per:["2015–19","2020–24","Dec 2024 →"],buckets:["Quiet","Normal","Wide"],
+ avg:[[0.75,0.79,0.76],[1.02,1.00,1.06],[1.29,1.56,1.21]],gt1:[[16,20,17],[40,41,46],[62,68,59]],n:[[389,373,227],[388,241,140],[388,601,120]],
+ gf:[["0.2–0.4%",53,45,820,51],["0.4–0.7%",31,25,541,30],["0.7–1.0%",16,15,216,16],["above 1.0%",11,2,182,7]],
+ vix:[["Low (VIX already prices more)",0.94,0.94,1.02],["Middle",1.01,1.04,1.02],["High (we expect more than VIX)",1.15,1.09,1.13]],
+ base:[["Exact bucket right","51 / 51%","58 / 57%","50 / 49%"],["Wide − Quiet spread","0.54 / 0.33","0.77 / 0.64","0.45 / 0.28"],["Quiet days >1.2%","9 / 16%","13 / 19%","8 / 15%"]]};
+function drawRR(){
+ kpis("rr-kpis",[["Quiet days moving >1%","16–20%","in every period · option buyers fight time decay","dn","var(--muted)"],
+  ["Wide days moving >1%","59–68%","in every period · room for option buyers","up","var(--s4)"],
+  ["Gaps above 0.7% filled by 11:00","7–16%","don't fade big gaps","dn","var(--neg)"],
+  ["Range vs VIX-implied, top tercile","1.09–1.15×","vs 0.94–1.02× bottom tercile","up","var(--s2)"]]);
+ const cs=[css("--s1"),css("--s2"),css("--s4")];
+ hbars("rr-avg",RR.buckets.map((b,i)=>({label:b,v:RR.avg[i]})),{W:560,lw:80,bh:14,gg:12,colors:cs,fmt:v=>v.toFixed(2)+"%",max:1.8,
+  tip:r=>{const i=RR.buckets.indexOf(r.label);return `<b>${r.label} days</b>`+RR.per.map((p,j)=>`${p}  ${RR.avg[i][j].toFixed(2)}%  (${RR.n[i][j]} days)`).join("\n")}});
+ hbars("rr-gt1",RR.buckets.map((b,i)=>({label:b,v:RR.gt1[i]})),{W:560,lw:80,bh:14,gg:12,colors:cs,fmt:v=>v+"%",max:80,
+  tip:r=>{const i=RR.buckets.indexOf(r.label);return `<b>${r.label} days</b>`+RR.per.map((p,j)=>`${p}  ${RR.gt1[i][j]}% moved >1%`).join("\n")}});
+ hbars("rr-gf",RR.gf.map(r=>({label:r[0],v:[r[1],r[2]]})),{W:560,lw:90,bh:14,gg:12,colors:[css("--pos"),css("--neg")],fmt:v=>v+"%",max:60,
+  tip:r=>{const g=RR.gf.find(x=>x[0]===r.label);return `<b>|gap| ${g[0]}</b>All gaps  ${g[4]}% filled (${g[3]} sessions)\nGap up  ${g[1]}%\nGap down  ${g[2]}%`}});
+ $("rr-vix").innerHTML=RR.vix.map(r=>`<tr><td class="l">${r[0]}</td>${r.slice(1).map(v=>`<td class="m" style="color:${v>1.05?"var(--pos)":v<0.97?"var(--neg)":"var(--text)"}">${v.toFixed(2)}×</td>`).join("")}</tr>`).join("");
+ $("rr-base").innerHTML=RR.base.map(r=>`<tr><td class="l">${r[0]}</td>${r.slice(1).map(v=>`<td class="m">${v}</td>`).join("")}</tr>`).join("")}
+const DRAW={ov:drawOverview,lab:drawLab,p1:drawP1,bd:drawBD,ev:drawEV,rg:drawRg,rr:drawRR,me:()=>{}};
 const cur=()=>document.querySelector(".tab.on").dataset.p;
 function go(p,keep){document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.p===p));document.querySelectorAll(".page").forEach(s=>s.classList.toggle("on",s.id===p));DRAW[p]();history.replaceState(null,"","#"+p);if(!keep)scrollTo({top:0})}
 document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>go(t.dataset.p)));

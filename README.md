@@ -13,10 +13,11 @@ Social media is full of "99% accurate" Nifty predictors built on the S&P 500, US
 - **Gap, yes:** data known before 09:15 explains about **26%** of the opening gap.
 - **Tradable move, no:** in the untouched 2020–24 test the open-to-close calls were right **46%** of the time, and lost money in every year after costs.
 - **Regime, yes:** "fear" regimes were followed by stronger 20-day returns, and the "mid-zone" was weak, in every period.
+- **Size, yes; sign, no:** a 3-input model known at 09:00 separates calm days from wide ones in every period, and gap size alone tells you whether a gap is likely to fill by 11:00.
 
 **[▶ Open the interactive dashboard](https://sroy-quant.github.io/nifty-macro-research/)** to change thresholds, costs, periods and regimes, and every figure recalculates from the daily data.
 
-**Contents:** [Part 1: attribution](#part-1-why-does-nifty-move-each-day-dec-2024--nov-2026-487-sessions) · [Part 2: morning score](#part-2-a-fixed-morning-score-tested-out-of-sample-2015--2026) · [Regime](#what-held-up-the-regime) · [Lessons](#lessons) · [Methodology](#methodology--stack)
+**Contents:** [Part 1: attribution](#part-1-why-does-nifty-move-each-day-dec-2024--nov-2026-487-sessions) · [Part 2: morning score](#part-2-a-fixed-morning-score-tested-out-of-sample-2015--2026) · [Regime](#what-held-up-the-regime) · [Range & gap fill](#follow-up-day-range-and-gap-fill) · [Lessons](#lessons) · [Methodology](#methodology--stack)
 
 ## Part 1: why does Nifty move each day? (Dec 2024 – Nov 2026, 487 sessions)
 
@@ -61,11 +62,42 @@ Score = equal-weight mean of five signed z-scores: US VIX change, S&P 500 return
 - **Fear** (India VIX in its top 20%, or Nifty ≥ 8% below its 52-week high) was followed by above-average 20-day returns.
 - **Mid-zone** (2–8% below the high with calm VIX) was weak in all three periods: a useful "don't add longs" filter.
 
+## Follow-up: day range and gap fill
+
+Direction is close to a coin flip, but **how far** Nifty moves is not. A three-input model known at 09:00 (the previous day's range, the 5-day average range and India VIX) sorts days into Quiet, Normal and Wide. It was fitted on 2015–19 and its cut-offs were never changed.
+
+| Expected | Avg range 2015–19 / 2020–24 / Dec 24 → | Days moving > 1% |
+|---|---|---|
+| Quiet | 0.75 / 0.79 / 0.76% | 16 / 20 / 17% |
+| Normal | 1.02 / 1.00 / 1.06% | 40 / 41 / 46% |
+| Wide | 1.29 / 1.56 / 1.21% | 62 / 68 / 59% |
+
+- **Gap fill by 11:00** depends on gap size. The share of gaps that filled:
+
+  | Gap size | Filled by 11:00 |
+  |---|---|
+  | 0.2–0.4% | 51% |
+  | 0.4–0.7% | 30% |
+  | 0.7–1.0% | 16% |
+  | above 1.0% | 7% |
+
+  Direction, a "surprise" gap and the regime added nothing reliable beyond size.
+- **Versus India VIX:** on days when the model expects more range than VIX implies, the actual range ran 1.09–1.15× the VIX-implied move, against 0.94–1.02× when it expects less. This held in every period and in 30 of 40 rolling windows. The effect is modest.
+- **Versus a naive baseline** ("same as yesterday's range"): the model picks the exact bucket no better than the baseline (≈50%). Where it beats the baseline is in separating calm days from big ones: Wide − Quiet spread of 0.45% vs 0.28% since Dec 2024, and half as many surprise big days on "Quiet" calls.
+- **Tested and dropped:**
+  - updating the range at 09:15 or 09:30;
+  - trading predicted trend days;
+  - an ML filter on an overnight strategy;
+  - a hidden-Markov regime.
+
+  None beat the simpler versions on unseen data.
+
 ## Lessons
 1. Split every driver by **when it is known**; most "predictive" macro links are same-day explanations.
 2. Fix weights and thresholds before testing, keep an untouched period, and compare with a shuffled benchmark.
 3. Report results **after costs**, by year, including what failed.
 4. Daily direction is close to a coin flip; slower regimes carry the usable information.
+5. Size is easier than sign: range and gap fill are predictable when direction is not.
 
 ## Methodology & stack
 - **Data:** Yahoo Finance daily bars (NIFTY 50, S&P 500, VIX, US 10Y, dollar index, Brent, USD/INR, Asia), NSE FII/DII, India VIX, and an event calendar (RBI, Fed, budget, elections, expiries, holidays), Jan 2015 – Nov 2026.
